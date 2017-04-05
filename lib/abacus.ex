@@ -22,6 +22,11 @@ defmodule Abacus do
   defmacro __before_compile__(_env) do
     quote do
 
+      def map({mod, t, _} = data, lambda) do 
+        elt = unwrap(data)
+        {mod, t, lambda.(elt)}
+      end
+
       def unwrap({mod, _, value}) do 
         case mod do 
           __MODULE__ -> value 
