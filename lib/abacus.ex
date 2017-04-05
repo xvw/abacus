@@ -18,13 +18,18 @@ defmodule Abacus do
 
   defexception message: "default message"
 
-  defp int_to_float(x) do 
-    x / 1.0
-  end
-
   @doc false 
   defmacro __before_compile__(_env) do
-    quote do 
+    quote do
+
+      def unwrap({mod, _, value}) do 
+        case mod do 
+          __MODULE__ -> value 
+          _ ->
+          raise Abacus, message: "[#{__MODULE__} is not compatible with #{mod}]"
+        end
+      end
+      
       def from(value, to: basis) do 
         case value do 
           {__MODULE__, type, elt} ->
@@ -42,7 +47,7 @@ defmodule Abacus do
     end
   end
 
-  defmacro base(name) do 
+  defmacro unit(name) do 
     quote do 
       if @base do
         raise Abacus, message: "Base is already defined"
@@ -53,8 +58,7 @@ defmodule Abacus do
     end
   end
 
-  defmacro unit(name, in_expr) do
-    expr = int_to_float(in_expr)
+  defmacro unit(name, expr) do
     quote do
       unless @base do 
         raise Abacus, message: "Base must be defined"
