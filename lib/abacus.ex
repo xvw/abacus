@@ -18,28 +18,30 @@ defmodule Abacus do
 
   defexception message: "default message"
 
-  @doc false 
-  defmacro __before_compile__(_env) do
-    quote do
-
+  @doc false
+  defmacro create_map_function() do 
+    quote do 
       def map({mod, t, _} = data, f) do 
         elt = unwrap(data)
         {mod, t, f.(elt)}
       end
+    end
+  end
 
+  @doc false 
+  defmacro create_map2_function() do 
+    quote do 
       def map2({mod, t, _} = data, {mod, t, _} = data2, f) do 
         value_a = unwrap(data)
         value_b = unwrap(data2)
         {mod, t, f.(value_a, value_b)}
       end
+    end
+  end
 
-      def fold(list, acc, f, to: basis) do 
-        List.foldl(list, acc, fn(x, acc) ->
-          converted = from(x, to: basis)
-          f.(converted, acc)
-        end)
-      end
-
+  @doc false 
+  defmacro create_sum_function() do 
+    quote do 
       def sum(list, to: basis) do 
         fold(
           list, apply(__MODULE__, basis, [0]),
@@ -49,7 +51,24 @@ defmodule Abacus do
           to: basis
         )
       end
+    end
+  end
 
+  @doc false 
+  defmacro create_fold_function() do 
+    quote do 
+      def fold(list, acc, f, to: basis) do 
+        List.foldl(list, acc, fn(x, acc) ->
+          converted = from(x, to: basis)
+          f.(converted, acc)
+        end)
+      end
+    end
+  end
+
+  @doc false 
+  defmacro create_unwrap_function() do 
+    quote do 
       def unwrap({mod, _, value}) do 
         case mod do 
           __MODULE__ -> value 
@@ -57,7 +76,12 @@ defmodule Abacus do
           raise Abacus, message: "[#{__MODULE__} is not compatible with #{mod}]"
         end
       end
-      
+    end
+  end
+
+  @doc false 
+  defmacro create_from_function() do 
+    quote do 
       def from(value, to: basis) do 
         case value do 
           {__MODULE__, type, elt} ->
@@ -72,6 +96,18 @@ defmodule Abacus do
           _ -> raise Abacus, message: "Invalid input"
         end
       end
+    end
+  end
+  
+  @doc false 
+  defmacro __before_compile__(_env) do
+    quote do
+      create_map_function()
+      create_map2_function()
+      create_fold_function()
+      create_sum_function()
+      create_unwrap_function()
+      create_from_function()
     end
   end
 
