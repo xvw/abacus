@@ -40,6 +40,16 @@ defmodule Abacus do
         end)
       end
 
+      def sum(list, to: basis) do 
+        fold(
+          list, apply(__MODULE__, basis, [0]),
+          fn(x, acc) ->
+            map2(x, acc, fn(a, b) -> a + b end)
+          end, 
+          to: basis
+        )
+      end
+
       def unwrap({mod, _, value}) do 
         case mod do 
           __MODULE__ -> value 
