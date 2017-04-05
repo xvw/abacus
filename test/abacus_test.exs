@@ -8,7 +8,7 @@ defmodule AbacusTest do
   doctest Abacus
 
   test "the truth" do
-    IO.inspect km(1000)
+    IO.inspect (from (cm 1000), to: :km)
     assert 1 + 1 == 2
   end
 end
