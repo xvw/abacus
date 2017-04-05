@@ -44,5 +44,4 @@ defmodule AbacusTest do
     |> Length.unwrap
     assert input == 22
   end
-
 end

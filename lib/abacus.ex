@@ -22,9 +22,22 @@ defmodule Abacus do
   defmacro __before_compile__(_env) do
     quote do
 
-      def map({mod, t, _} = data, lambda) do 
+      def map({mod, t, _} = data, f) do 
         elt = unwrap(data)
-        {mod, t, lambda.(elt)}
+        {mod, t, f.(elt)}
+      end
+
+      def map2({mod, t, _} = data, {mod, t, _} = data2, f) do 
+        value_a = unwrap(data)
+        value_b = unwrap(data2)
+        {mod, t, f.(value_a, value_b)}
+      end
+
+      def fold(list, acc, f, to: basis) do 
+        List.foldl(list, acc, fn(x, acc) ->
+          converted = from(x, to: basis)
+          f.(converted, acc)
+        end)
       end
 
       def unwrap({mod, _, value}) do 
