@@ -4,7 +4,7 @@ defmodule AbacusTest do
   doctest Abacus
 
   defmodule Length do 
-    use Abacus
+    use Abacus.SystemMetric
     unit :cm 
     unit :mm, (1/10)
     unit :dm, 10
@@ -13,35 +13,37 @@ defmodule AbacusTest do
   end
 
   defmodule Money do 
-    use Abacus
+    use Abacus.SystemMetric
     unit :euro
     unit :dollar, 1.06665
   end
 
   test "Test for unwraping" do 
     input = Length.cm(12)
-    assert (Length.unwrap input) == 12
+    assert (Abacus.unwrap input) == 12
+  end
+
+  test "Test for difftyped data" do 
+    k = Money.euro(12)
+    try do
+      Abacus.from(k, to: Money.dollar)
+      IO.inspect "test"
+      assert 1 == 3
+    rescue _ -> 
+      assert true
+    end
   end
 
   test "Test conversion" do 
     input = Length.cm(350)
-    to_m  = Length.from input, to: :m
-    assert Length.unwrap(to_m) == 3.5
-  end
-
-  test "Unwrapping between different modules" do 
-    input = Length.cm(12)
-    try do 
-      Money.unwrap(input)
-      assert false
-    rescue _ -> assert true
-    end
+    to_m  = Abacus.from input, to: Length.m
+    assert Abacus.unwrap(to_m) == 3.5
   end
 
   test "Test for Mapping" do 
     input = Length.cm(12)
     |> Length.map(fn(x) -> x + 10 end)
-    |> Length.unwrap
+    |> Abacus.unwrap
     assert input == 22
   end
 
@@ -49,7 +51,7 @@ defmodule AbacusTest do
     a = Length.dm(12)
     b = Length.dm(34)
     c = Length.map2(a, b, fn(x, y) -> x + y end)
-    assert Length.unwrap(c) == 46
+    assert Abacus.unwrap(c) == 46
   end 
 
   test "failure for map2" do 
@@ -70,9 +72,9 @@ defmodule AbacusTest do
         fn(x, acc) -> 
           Length.map2(x, acc, fn(a, b) -> a+b end) 
         end,
-        to: :m
+        to: Length.m
         )
-      |> Length.unwrap
+      |> Abacus.unwrap
       assert result == 1014
 
   end
@@ -80,8 +82,8 @@ defmodule AbacusTest do
   test "for Sum" do 
     result = 
       [Length.m(12), Length.km(1), Length.cm(14)]
-      |> Length.sum(to: :cm)
-      |> Length.unwrap()
+      |> Length.sum(to: Length.cm)
+      |> Abacus.unwrap()
 
     assert result == (100000 + 1200 + 14)
     
