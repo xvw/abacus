@@ -25,12 +25,10 @@ defmodule AbacusTest do
 
   test "Test for difftyped data" do 
     k = Money.euro(12)
-    try do
-      Abacus.from(k, to: Money.dollar)
-      IO.inspect "test"
-      assert 1 == 3
-    rescue _ -> 
-      assert true
+    module = Money
+    other_module = Length
+    assert_raise Abacus, "[#{module}] is not compatible with [#{other_module}]", fn -> 
+      _ = Abacus.from(k, to: Length.cm)
     end
   end
 
@@ -57,6 +55,7 @@ defmodule AbacusTest do
   test "failure for map2" do 
     a = Length.dm(12)
     b = Length.cm(34)
+    Length.map2(a, b, fn(x, y) -> x + y end)
     try do 
       _ = Length.map2(a, b, fn(x, y) -> x + y end)
       assert false 

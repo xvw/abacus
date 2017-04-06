@@ -14,65 +14,6 @@ defmodule Abacus do
       quote do
         import Abacus.SystemMetric
         @base nil
-        @before_compile Abacus.SystemMetric
-      end
-    end
-
-    @doc false
-    defmacro create_map_function() do 
-      quote do 
-        def map({mod, t, _} = data, f) do 
-          elt = Abacus.unwrap(data)
-          {mod, t, f.(elt)}
-        end
-      end
-    end
-
-    @doc false 
-    defmacro create_map2_function() do 
-      quote do 
-        def map2({mod, t, _} = data, {mod, t, _} = data2, f) do 
-          value_a = Abacus.unwrap(data)
-          value_b = Abacus.unwrap(data2)
-          {mod, t, f.(value_a, value_b)}
-        end
-      end
-    end
-
-    @doc false 
-    defmacro create_sum_function() do 
-      quote do 
-        def sum(list, to: {_, basis_name, coeff} = basis) do 
-          fold(
-            list, apply(__MODULE__, basis_name, [0]),
-            fn(x, acc) ->
-              map2(x, acc, fn(a, b) -> a + b end)
-            end, 
-            to: basis
-          )
-        end
-      end
-    end
-
-    @doc false 
-    defmacro create_fold_function() do 
-      quote do 
-        def fold(list, acc, f, to: basis) do 
-          List.foldl(list, acc, fn(x, acc) ->
-            converted = Abacus.from(x, to: basis)
-            f.(converted, acc)
-          end)
-        end
-      end
-    end
-
-     @doc false 
-    defmacro __before_compile__(_env) do
-      quote do
-        create_map_function()
-        create_map2_function()
-        create_fold_function()
-        create_sum_function()
       end
     end
 
@@ -124,6 +65,28 @@ defmodule Abacus do
 
   def from({module, _, _}, to: {other_module, _, _}) do 
     raise Abacus, message: "[#{module}] is not compatible with [#{other_module}]"
+  end
+
+  def map({mod, type, elt}, f) do 
+    {mod, type, f.(elt)}
+  end
+
+  def map2({mod, t, elt}, {mod, t, elt2}, f) do 
+    {mod, t, f.(elt, elt2)}
+  end
+
+  def fold(list, default, f, to: basis) do 
+    List.foldl(list, default, fn(x, acc) ->
+      converted = Abacus.from(x, to: basis)
+    end)
+  end
+
+  def sum(list, to: {module, basis_name, coeff} = basis) do 
+    fold(
+      list, apply(module, basis_name, [0]),
+      fn(x, acc) -> map2(x, acc, fn(a, b) -> a + b end),
+      to: basis
+    )
   end
 
 end
