@@ -1,8 +1,7 @@
 defmodule Abacus do
 
   @moduledoc """
-  Abacus is a tool to Abacus is a tool to simplify 
-  the handling of units.
+  Abacus is a tool to simplify the handling of units.
   """
 
   defexception message: "default message"
