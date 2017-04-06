@@ -7,13 +7,6 @@ defmodule Abacus.Mixfile do
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     dialyzer: [ 
-       flags: [
-         :error_handling, 
-         :race_conditions, 
-         :underspecs
-        ]
-      ],
      deps: deps()]
   end
 

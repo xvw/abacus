@@ -10,7 +10,7 @@ defmodule Abacus do
   @type metric_type :: {
     module, 
     atom, 
-    float
+    number
   }
 
   @typedoc """
@@ -18,15 +18,13 @@ defmodule Abacus do
   """
   @type typed_value :: {
     metric_type, 
-    float
+    number
   }
 
   @typedoc """
   This type represents the option 'to:'
   """
-  @type to_option :: {
-    {:to, metric_type}
-  }
+  @type to_option :: [to: metric_type]
 
 
   defexception message: "default message"
@@ -77,10 +75,10 @@ defmodule Abacus do
     end
   end
 
-  @spec unwrap(typed_value) :: number
+  @spec unwrap(typed_value()) :: number()
   def unwrap({_, elt}), do: elt
 
-  @spec from(typed_value, [to_option]) :: typed_value
+  @spec from(typed_value(), to_option()) :: typed_value()
   def from({{module, _, coeff}, elt}, to: {module, _, coeff_basis} = basis) do 
     divider = 1 / coeff_basis
     basis_elt = (elt * coeff) * divider
@@ -91,15 +89,15 @@ defmodule Abacus do
     raise Abacus, message: "[#{module}] is not compatible with [#{other_module}]"
   end
 
-  @spec map(typed_value, (number -> number)) :: typed_value
+  @spec map(typed_value(), (number() -> number())) :: typed_value()
   def map({type, elt}, f) do 
     {type, f.(elt)}
   end
 
   @spec map2(
-    typed_value, 
-    typed_value, 
-    (number, number -> number)
+    typed_value(), 
+    typed_value(), 
+    (number(), number() -> number())
     ) :: typed_value
   def map2({t, elt}, {t, elt2}, f) do 
     {t, f.(elt, elt2)}
@@ -117,11 +115,11 @@ defmodule Abacus do
   end
 
   @spec fold(
-    [typed_value], 
-    any, 
-    (typed_value, any -> any),
-    [to_option]
-    ) :: any
+    [typed_value()], 
+    any(), 
+    (typed_value(), any() -> any()),
+    to_option()
+    ) :: any()
   def fold(list, default, f, to: basis) do 
     List.foldl(list, default, fn(x, acc) ->
       converted = Abacus.from(x, to: basis)
@@ -129,10 +127,7 @@ defmodule Abacus do
     end)
   end
 
-  @spec sum(
-    [typed_value],
-    [to_option]
-  ) :: typed_value
+  @spec sum([typed_value()], to_option()) :: typed_value()
   def sum(list, to: {module, basis_name, _coeff} = basis) do 
     fold(
       list, apply(module, basis_name, [0]),
