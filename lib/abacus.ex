@@ -74,10 +74,6 @@ defmodule Abacus do
     {mod, t, f.(elt, elt2)}
   end
 
-  def map2({_, {_, type, _}, _}, {_, {_, other_type}, _}, _) do
-    raise Abacus, message: "[#{type}] is not compatible with [#{other_type}]"
-  end
-
   def map2({module, {_, t, _}, _}, {other_module, {_, nt, _}, _}, _) do 
     cond do 
       module != module ->
