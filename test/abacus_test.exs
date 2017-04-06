@@ -40,7 +40,7 @@ defmodule AbacusTest do
 
   test "Test for Mapping" do 
     input = Length.cm(12)
-    |> Length.map(fn(x) -> x + 10 end)
+    |> Abacus.map(fn(x) -> x + 10 end)
     |> Abacus.unwrap
     assert input == 22
   end
@@ -48,16 +48,15 @@ defmodule AbacusTest do
   test "Test for map2" do 
     a = Length.dm(12)
     b = Length.dm(34)
-    c = Length.map2(a, b, fn(x, y) -> x + y end)
+    c = Abacus.map2(a, b, fn(x, y) -> x + y end)
     assert Abacus.unwrap(c) == 46
   end 
 
   test "failure for map2" do 
     a = Length.dm(12)
     b = Length.cm(34)
-    Length.map2(a, b, fn(x, y) -> x + y end)
     try do 
-      _ = Length.map2(a, b, fn(x, y) -> x + y end)
+      _ = Abacus.map2(a, b, fn(x, y) -> x + y end)
       assert false 
     rescue _ -> assert true 
     end
@@ -66,10 +65,10 @@ defmodule AbacusTest do
   test "for fold" do 
     result = 
       [Length.cm(100), Length.km(1), Length.m(13)]
-      |> Length.fold(
+      |> Abacus.fold(
         Length.m(0), 
         fn(x, acc) -> 
-          Length.map2(x, acc, fn(a, b) -> a+b end) 
+          Abacus.map2(x, acc, fn(a, b) -> a+b end) 
         end,
         to: Length.m
         )
@@ -81,7 +80,7 @@ defmodule AbacusTest do
   test "for Sum" do 
     result = 
       [Length.m(12), Length.km(1), Length.cm(14)]
-      |> Length.sum(to: Length.cm)
+      |> Abacus.sum(to: Length.cm)
       |> Abacus.unwrap()
 
     assert result == (100000 + 1200 + 14)

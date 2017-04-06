@@ -75,16 +75,32 @@ defmodule Abacus do
     {mod, t, f.(elt, elt2)}
   end
 
+  def map2({_, {_, type, _}, _}, {_, {_, other_type}, _}, _) do
+    raise Abacus, message: "[#{type}] is not compatible with [#{other_type}]"
+  end
+
+  def map2({module, {_, t, _}, _}, {other_module, {_, nt, _}, _}, _) do 
+    cond do 
+      module != module ->
+        raise Abacus, message: "[#{module}] is not compatible with [#{other_module}]"
+      t != nt -> 
+        raise Abacus, message: "[#{t}] is not compatible with [#{nt}]"
+      true -> 
+        raise Abacus, message: "Invalid Input"
+      end
+  end
+
   def fold(list, default, f, to: basis) do 
     List.foldl(list, default, fn(x, acc) ->
       converted = Abacus.from(x, to: basis)
+      f.(converted, acc)
     end)
   end
 
-  def sum(list, to: {module, basis_name, coeff} = basis) do 
+  def sum(list, to: {module, basis_name, _coeff} = basis) do 
     fold(
       list, apply(module, basis_name, [0]),
-      fn(x, acc) -> map2(x, acc, fn(a, b) -> a + b end),
+      fn(x, acc) -> map2(x, acc, fn(a, b) -> a + b end) end,
       to: basis
     )
   end
