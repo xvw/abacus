@@ -1,11 +1,50 @@
 defmodule Abacus do
 
   @moduledoc """
-  Abacus is a tool to simplify the handling of units.
+  Abacus is a tool to simplify the handling of units. 
+
+  For example : 
+
+  ```
+  defmodule Length do 
+    use Abacus.SystemMetric
+
+    unit :cm  # This is the unit used a reference
+    unit :mm, (1/10)
+    unit :dm, 10
+    unit :m,  100
+    unit :km, 100000
+
+  end
+  ```
+
+  This module provides functions to reference a metric type :
+
+  -  `Length.cm/0`
+  -  `Length.mm/0`
+  -  `Length.dm/0`
+  -  `Length.m/0`
+  -  `Length.km/0`
+
+  and functions to create a typed value :
+
+  -  `Length.cm/1`
+  -  `Length.mm/1`
+  -  `Length.dm/1`
+  -  `Length.m/1`
+  -  `Length.km/1`
+
+  Here is an example of using Abacus : 
+
+  ```
+  a_distance = Length.cm(12)
+  a_distance_in_km = Abacus.from(a_distance, to: Length.km)
+  ```
+
   """
 
   @typedoc """
-  This type represents a type (defined with using SystemMetric)
+  This type represents a type (defined with using Abacus.SystemMetric)
   """
   @type metric_type :: {
     module, 
@@ -27,8 +66,6 @@ defmodule Abacus do
   @type to_option :: [to: metric_type]
 
 
-  defexception message: "default message"
-
   defmodule SystemMetric do 
 
     @doc false
@@ -42,7 +79,7 @@ defmodule Abacus do
     defmacro unit(name) do 
       quote do 
         if @base do
-          raise Abacus, message: "Base is already defined"
+          raise RuntimeError, message: "Base is already defined"
         end
         @base unquote(name)
         def unquote(name)(), do: {__MODULE__, unquote(name), unquote(1.0)}
@@ -58,11 +95,11 @@ defmodule Abacus do
     defmacro unit(name, expr) do
       quote do
         unless @base do 
-          raise Abacus, message: "Base must be defined"
+          raise RuntimeError, message: "Base must be defined"
         end
         unit_name  = unquote(name)
         if @base == unit_name do 
-          raise Abacus, message: "#{unit_name} is already defined"
+          raise RuntimeError, message: "#{unit_name} is already defined"
         end
         def unquote(name)(), do: {__MODULE__, unquote(name), unquote(expr)}
         def unquote(name)(value) do 
@@ -75,6 +112,12 @@ defmodule Abacus do
     end
   end
 
+  @doc """
+  Convert a typed value into a number :
+
+      iex> x = Length.cm(12); Abacus.unwrap(x)
+      12
+  """
   @spec unwrap(typed_value()) :: number()
   def unwrap({_, elt}), do: elt
 
@@ -86,7 +129,7 @@ defmodule Abacus do
   end
 
   def from({{module, _, _}, _}, to: {other_module, _, _}) do 
-    raise Abacus, message: "[#{module}] is not compatible with [#{other_module}]"
+    raise RuntimeError, message: "[#{module}] is not compatible with [#{other_module}]"
   end
 
   @spec map(typed_value(), (number() -> number())) :: typed_value()
@@ -106,11 +149,11 @@ defmodule Abacus do
   def map2({{module, t, _}, _}, {{other_module, nt, _}, _}, _) do 
     cond do 
       module != other_module ->
-        raise Abacus, message: "[#{module}] is not compatible with [#{other_module}]"
+        raise RuntimeError, message: "[#{module}] is not compatible with [#{other_module}]"
       t != nt -> 
-        raise Abacus, message: "[#{t}] is not compatible with [#{nt}]"
+        raise RuntimeError, message: "[#{t}] is not compatible with [#{nt}]"
       true -> 
-        raise Abacus, message: "Invalid Input"
+        raise RuntimeError, message: "Invalid Input"
       end
   end
 

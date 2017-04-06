@@ -27,7 +27,7 @@ defmodule AbacusTest do
     k = Money.euro(12)
     module = Money
     other_module = Length
-    assert_raise Abacus, "[#{module}] is not compatible with [#{other_module}]", fn -> 
+    assert_raise RuntimeError, "[#{module}] is not compatible with [#{other_module}]", fn -> 
       _ = Abacus.from(k, to: Length.cm)
     end
   end
@@ -55,7 +55,7 @@ defmodule AbacusTest do
   test "failure for map2" do 
     a = Length.dm(12)
     b = Length.cm(34)
-    assert_raise Abacus, "[dm] is not compatible with [cm]", fn -> 
+    assert_raise RuntimeError, "[dm] is not compatible with [cm]", fn -> 
       _ = Abacus.map2(a, b, fn(x, y) -> x + y end)
     end
   end

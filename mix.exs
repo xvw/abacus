@@ -2,11 +2,19 @@ defmodule Abacus.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :abacus,
-     version: "0.1.0",
-     elixir: "~> 1.4",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
+    [
+      app: :abacus,
+      version: "0.1.0",
+      elixir: "~> 1.4",
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      name: "Abacus",
+      source_url: "https://github.com/xvw/abacus",
+      homepage_url: "https://xvw.github.io/xvw/abacus",
+      docs: [
+        main: "Abacus",
+        extras: ["README.md"]
+      ],
      deps: deps()]
   end
 
@@ -29,7 +37,8 @@ defmodule Abacus.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
+      {:ex_doc, "~> 0.14", only: :dev, runtime: false}
     ]
   end
 end
