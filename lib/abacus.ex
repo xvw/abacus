@@ -6,7 +6,10 @@ defmodule Abacus do
   For example : 
 
   ```
-  defmodule Length do 
+  # This module is used during the documentation to 
+  # show some examples.
+
+  defmodule AbacusTest.Length do 
     use Abacus.SystemMetric
 
     unit :cm  # This is the unit used a reference
@@ -61,7 +64,7 @@ defmodule Abacus do
   }
 
   @typedoc """
-  This type represents the option 'to:'
+  This type represents the option `to:`
   """
   @type to_option :: [to: metric_type]
 
@@ -76,6 +79,18 @@ defmodule Abacus do
       end
     end
 
+    @doc """
+    A macro to generate the base of the system.
+    This unit is the reference of each other units.
+    for example : 
+    ```
+    defmodule Example do 
+      use Abacus.SystemMetric
+
+      unit :cm
+    end
+    ```
+    """
     defmacro unit(name) do 
       quote do 
         if @base do
@@ -92,6 +107,19 @@ defmodule Abacus do
       end
     end
 
+    @doc """
+    A macro to generate an unit using the `base` as a reference. 
+    for example : 
+    ```
+    defmodule Example do 
+      use Abacus.SystemMetric
+
+      unit :cm
+      unit :m, 100 # (100 cm  == 1 m)
+      unit :dm, 10 # (10 cm == 1 dm)
+    end
+    ```
+    """
     defmacro unit(name, expr) do
       quote do
         unless @base do 
@@ -113,10 +141,13 @@ defmodule Abacus do
   end
 
   @doc """
-  Convert a typed value into a number :
+  Convert a typed_value() into a number, this function is used 
+  to extract data from a typed value.
 
-      iex> x = Length.cm(12); Abacus.unwrap(x)
+      iex> x = AbacusTest.Length.cm(12)
+      ...> x = Abacus.unwrap(x)
       12
+
   """
   @spec unwrap(typed_value()) :: number()
   def unwrap({_, elt}), do: elt
