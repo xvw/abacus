@@ -4,6 +4,31 @@ defmodule Abacus do
   Abacus is a tool to simplify the handling of units.
   """
 
+  @typedoc """
+  This type represents a type (defined with using SystemMetric)
+  """
+  @type metric_type :: {
+    module, 
+    atom, 
+    number
+  }
+
+  @typedoc """
+  This type represents a value wrapped in a metric_type
+  """
+  @type typed_value :: {
+    metric_type, 
+    number
+  }
+
+  @typedoc """
+  This type represents the option 'to:'
+  """
+  @type to_option :: {
+    {:to, metric_type}
+  }
+
+
   defexception message: "default message"
 
   defmodule SystemMetric do 
@@ -54,26 +79,40 @@ defmodule Abacus do
     end
   end
 
+  @spec unwrap(typed_value) :: number
   def unwrap({_, _, elt}), do: elt
 
+  @spec from(typed_value, [to_option]) :: typed_value
   def from({module, {_, _, coeff,}, elt}, to: {module, _, coeff_basis} = basis) do 
     divider = 1 / coeff_basis
     basis_elt = (elt * coeff) * divider
     {module, basis, basis_elt}
   end
 
+  @spec from(typed_value, [to_option]) :: typed_value
   def from({module, _, _}, to: {other_module, _, _}) do 
     raise Abacus, message: "[#{module}] is not compatible with [#{other_module}]"
   end
 
+  @spec map(typed_value, (number -> number)) :: typed_value
   def map({mod, type, elt}, f) do 
     {mod, type, f.(elt)}
   end
 
+  @spec map2(
+    typed_value, 
+    typed_value, 
+    (number, number -> number)
+    ) :: typed_value
   def map2({mod, t, elt}, {mod, t, elt2}, f) do 
     {mod, t, f.(elt, elt2)}
   end
 
+  @spec map2(
+    typed_value, 
+    typed_value, 
+    (number, number -> number)
+    ) :: typed_value
   def map2({module, {_, t, _}, _}, {other_module, {_, nt, _}, _}, _) do 
     cond do 
       module != module ->
@@ -85,6 +124,12 @@ defmodule Abacus do
       end
   end
 
+  @spec fold(
+    [typed_value], 
+    any, 
+    (typed_value, any -> typed_value),
+    [to_option]
+    ) :: any
   def fold(list, default, f, to: basis) do 
     List.foldl(list, default, fn(x, acc) ->
       converted = Abacus.from(x, to: basis)
@@ -92,6 +137,10 @@ defmodule Abacus do
     end)
   end
 
+  @spec sum(
+    [typed_value],
+    [to_option]
+  ) :: typed_value
   def sum(list, to: {module, basis_name, _coeff} = basis) do 
     fold(
       list, apply(module, basis_name, [0]),
