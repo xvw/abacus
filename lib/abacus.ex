@@ -10,7 +10,7 @@ defmodule Abacus do
   @type metric_type :: {
     module, 
     atom, 
-    number
+    float
   }
 
   @typedoc """
@@ -18,7 +18,7 @@ defmodule Abacus do
   """
   @type typed_value :: {
     metric_type, 
-    number
+    float
   }
 
   @typedoc """
@@ -50,7 +50,6 @@ defmodule Abacus do
         def unquote(name)(), do: {__MODULE__, unquote(name), unquote(1.0)}
         def unquote(name)(value) do 
           {
-            __MODULE__, 
             apply(__MODULE__, unquote(name), []), 
             value
           }
@@ -70,7 +69,6 @@ defmodule Abacus do
         def unquote(name)(), do: {__MODULE__, unquote(name), unquote(expr)}
         def unquote(name)(value) do 
           {
-            __MODULE__, 
             apply(__MODULE__, unquote(name), []), 
             value
           }
@@ -80,23 +78,22 @@ defmodule Abacus do
   end
 
   @spec unwrap(typed_value) :: number
-  def unwrap({_, _, elt}), do: elt
+  def unwrap({_, elt}), do: elt
 
   @spec from(typed_value, [to_option]) :: typed_value
-  def from({module, {_, _, coeff,}, elt}, to: {module, _, coeff_basis} = basis) do 
+  def from({{module, _, coeff}, elt}, to: {module, _, coeff_basis} = basis) do 
     divider = 1 / coeff_basis
     basis_elt = (elt * coeff) * divider
-    {module, basis, basis_elt}
+    {basis, basis_elt}
   end
 
-  @spec from(typed_value, [to_option]) :: typed_value
-  def from({module, _, _}, to: {other_module, _, _}) do 
+  def from({{module, _, _}, _}, to: {other_module, _, _}) do 
     raise Abacus, message: "[#{module}] is not compatible with [#{other_module}]"
   end
 
   @spec map(typed_value, (number -> number)) :: typed_value
-  def map({mod, type, elt}, f) do 
-    {mod, type, f.(elt)}
+  def map({type, elt}, f) do 
+    {type, f.(elt)}
   end
 
   @spec map2(
@@ -104,18 +101,13 @@ defmodule Abacus do
     typed_value, 
     (number, number -> number)
     ) :: typed_value
-  def map2({mod, t, elt}, {mod, t, elt2}, f) do 
-    {mod, t, f.(elt, elt2)}
+  def map2({t, elt}, {t, elt2}, f) do 
+    {t, f.(elt, elt2)}
   end
 
-  @spec map2(
-    typed_value, 
-    typed_value, 
-    (number, number -> number)
-    ) :: typed_value
-  def map2({module, {_, t, _}, _}, {other_module, {_, nt, _}, _}, _) do 
+  def map2({{module, t, _}, _}, {{other_module, nt, _}, _}, _) do 
     cond do 
-      module != module ->
+      module != other_module ->
         raise Abacus, message: "[#{module}] is not compatible with [#{other_module}]"
       t != nt -> 
         raise Abacus, message: "[#{t}] is not compatible with [#{nt}]"
@@ -127,7 +119,7 @@ defmodule Abacus do
   @spec fold(
     [typed_value], 
     any, 
-    (typed_value, any -> typed_value),
+    (typed_value, any -> any),
     [to_option]
     ) :: any
   def fold(list, default, f, to: basis) do 

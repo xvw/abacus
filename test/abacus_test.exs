@@ -18,12 +18,12 @@ defmodule AbacusTest do
     unit :dollar, 1.06665
   end
 
-  test "Test for unwraping" do 
+  test "for unwraping" do 
     input = Length.cm(12)
     assert (Abacus.unwrap input) == 12
   end
 
-  test "Test for difftyped data" do 
+  test "for difftyped data" do 
     k = Money.euro(12)
     module = Money
     other_module = Length
@@ -32,20 +32,20 @@ defmodule AbacusTest do
     end
   end
 
-  test "Test conversion" do 
+  test "for conversion" do 
     input = Length.cm(350)
     to_m  = Abacus.from input, to: Length.m
     assert Abacus.unwrap(to_m) == 3.5
   end
 
-  test "Test for Mapping" do 
+  test "for Mapping" do 
     input = Length.cm(12)
     |> Abacus.map(fn(x) -> x + 10 end)
     |> Abacus.unwrap
     assert input == 22
   end
 
-  test "Test for map2" do 
+  test "for map2" do 
     a = Length.dm(12)
     b = Length.dm(34)
     c = Abacus.map2(a, b, fn(x, y) -> x + y end)
@@ -55,10 +55,8 @@ defmodule AbacusTest do
   test "failure for map2" do 
     a = Length.dm(12)
     b = Length.cm(34)
-    try do 
+    assert_raise Abacus, "[dm] is not compatible with [cm]", fn -> 
       _ = Abacus.map2(a, b, fn(x, y) -> x + y end)
-      assert false 
-    rescue _ -> assert true 
     end
   end
 
