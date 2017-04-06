@@ -82,6 +82,8 @@ defmodule Abacus do
     @doc """
     A macro to generate the base of the system.
     This unit is the reference of each other units.
+    
+
     for example : 
     ```
     defmodule Example do 
@@ -109,6 +111,11 @@ defmodule Abacus do
 
     @doc """
     A macro to generate an unit using the `base` as a reference. 
+    This is referenced by a name (`:km` for example) and by a 
+    reference to the base, in the case of `:km` in a system 
+    referenced by `:cm` : 100000.
+
+    
     for example : 
     ```
     defmodule Example do 
