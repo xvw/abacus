@@ -66,6 +66,11 @@ defmodule Abacus do
     number
   }
 
+  @typedoc """
+  This type represents a results of a comparison
+  """
+  @type comparison_result :: :eq | :lt | :gt
+
 
   defmodule SystemMetric do 
 
@@ -150,7 +155,7 @@ defmodule Abacus do
 
   For example: 
       iex> x = AbacusTest.Length.cm(12)
-      ...> x = Abacus.unwrap(x)
+      ...> Abacus.unwrap(x)
       12
 
   """
@@ -276,6 +281,32 @@ defmodule Abacus do
       fn(x, acc) -> map2(x, acc, fn(a, b) -> a + b end) end,
       to: basis
     )
+  end
+
+  @doc """
+  Comparison between two `typed_value()` of the same metric system.
+
+  The function returns:
+  -  `:eq` for `equals` 
+  -  `:lt` if the left-values is **lower than** the right-values
+  -  `:gt` if the left-values is **greater than** the right-values
+
+  For example:
+
+      iex> x = AbacusTest.Length.m(1)
+      ...> y = AbacusTest.Length.cm(100)
+      ...> Abacus.compare(x, with: y)
+      :eq
+  """
+  @spec compare(typed_value(), [with: typed_value()]) :: comparison_result
+  def compare({t, _} = left, with: right) do 
+    a = unwrap(left)
+    b = unwrap(from(right, to: t))
+    cond do 
+      a > b -> :gt 
+      b > a -> :lt
+      true  -> :eq
+    end
   end
 
 end

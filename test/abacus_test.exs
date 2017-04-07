@@ -84,6 +84,22 @@ defmodule AbacusTest do
     assert result == (100000 + 1200 + 14)
     
   end
+
+  test "for comparison :eq 1" do 
+    x = Length.m(1)
+    y = Length.cm(100)
+    assert (Abacus.compare(x, with: y)) == :eq
+    assert (Abacus.compare(x, with: x)) == :eq
+    assert (Abacus.compare(y, with: y)) == :eq
+    assert (Abacus.compare(y, with: x)) == :eq
+  end
+
+  test "for comparison :lt/gt 1" do 
+    x = Length.m(23)
+    y = Length.cm(100)
+    assert (Abacus.compare(x, with: y)) == :gt
+    assert (Abacus.compare(y, with: x)) == :lt
+  end
   
 
 end
