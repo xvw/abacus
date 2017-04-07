@@ -108,6 +108,6 @@ defmodule AbacusTest do
       _ = Abacus.compare(y, with: x)
     end
   end
-  
+
 
 end

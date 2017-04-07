@@ -278,7 +278,7 @@ defmodule Abacus do
   def sum(list, to: {module, basis_name, _coeff} = basis) do 
     fold(
       list, apply(module, basis_name, [0]),
-      fn(x, acc) -> map2(x, acc, fn(a, b) -> a + b end) end,
+      &Abacus.+/2,
       to: basis
     )
   end
@@ -308,5 +308,13 @@ defmodule Abacus do
       true  -> :eq
     end
   end
+
+  #@spec (typed_value() + typed_value()) :: typed_value()
+  #def ({t, _} = left) + right do 
+  #  map2(
+  #    left, from(right, to: t),
+  #    &(:erlang.+)/2
+  #  )
+  #end
 
 end
