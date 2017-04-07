@@ -44,6 +44,8 @@ defmodule Abacus do
   a_distance_in_km = Abacus.from(a_distance, to: Length.km)
   ```
 
+  A type is defined by a module and a subtype. For example `Length` and `:cm`.
+
   """
 
   @typedoc """
@@ -115,7 +117,7 @@ defmodule Abacus do
     reference to the base, in the case of `:km` in a system 
     referenced by `:cm` : 100000.
 
-    
+
     for example : 
     ```
     defmodule Example do 
@@ -148,7 +150,7 @@ defmodule Abacus do
   end
 
   @doc """
-  Convert a typed_value() into a number, this function is used 
+  Convert a `typed_value()` into a number, this function is used 
   to extract data from a typed value.
 
       iex> x = AbacusTest.Length.cm(12)
@@ -159,6 +161,15 @@ defmodule Abacus do
   @spec unwrap(typed_value()) :: number()
   def unwrap({_, elt}), do: elt
 
+  @doc """
+  Convert a `typed_value()` into another `typed_value()'s` subtype.
+
+  For example : 
+      iex> x = AbacusTest.Length.cm(120)
+      ...> y = Abacus.from(x, to: AbacusTest.Length.m)
+      ...> Abacus.unwrap(y)
+      1.2
+  """
   @spec from(typed_value(), to_option()) :: typed_value()
   def from({{module, _, coeff}, elt}, to: {module, _, coeff_basis} = basis) do 
     divider = 1 / coeff_basis
@@ -170,6 +181,15 @@ defmodule Abacus do
     raise RuntimeError, message: "[#{module}] is not compatible with [#{other_module}]"
   end
 
+  @doc """
+  Apply a function to the numeric value inside a `typed_value()`.
+
+  For example :
+      iex> AbacusTest.Length.km(120)
+      ...> |> Abacus.map(fn(x) -> x * 2 end)
+      ...> |> Abacus.unwrap
+      240
+  """
   @spec map(typed_value(), (number() -> number())) :: typed_value()
   def map({type, elt}, f) do 
     {type, f.(elt)}
