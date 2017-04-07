@@ -225,6 +225,19 @@ defmodule Abacus do
   `List.foldl` for a list of `typed_value()` from the same metric system.
 
   For example:
+
+      iex> Abacus.fold(
+      ...>   [
+      ...>       AbacusTest.Length.cm(10), 
+      ...>       AbacusTest.Length.dm(1), 
+      ...>       AbacusTest.Length.m(12)
+      ...>   ],
+      ...>   AbacusTest.Length.cm(12),
+      ...>   fn(x, acc) -> Abacus.map2(x, acc, &(&1+&2)) end,
+      ...>   to: AbacusTest.Length.cm
+      ...>)
+      {AbacusTest.Length.cm, 1232.0}
+
   """
   @spec fold(
     [typed_value()], 
@@ -239,6 +252,23 @@ defmodule Abacus do
     end)
   end
 
+
+  @doc """
+  Calculates the sum of a list of `typed_value()` of the same 
+  metric system, projected into a specific subtype.
+
+  For example: 
+
+      iex> Abacus.sum(
+      ...>   [
+      ...>       AbacusTest.Length.cm(10), 
+      ...>       AbacusTest.Length.dm(1), 
+      ...>       AbacusTest.Length.m(12)
+      ...>   ], 
+      ...>   to: AbacusTest.Length.dm
+      ...> )
+      {AbacusTest.Length.dm, 122.0}
+  """
   @spec sum([typed_value()], [to: metric_type]) :: typed_value()
   def sum(list, to: {module, basis_name, _coeff} = basis) do 
     fold(
