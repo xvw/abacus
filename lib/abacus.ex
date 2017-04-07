@@ -12,7 +12,8 @@ defmodule Abacus do
   defmodule AbacusTest.Length do 
     use Abacus.SystemMetric
 
-    unit :cm  # This is the unit used a reference
+    # :cm is the unit used as a reference in the metric system 'Length'
+    unit :cm 
     unit :mm, (1/10)
     unit :dm, 10
     unit :m,  100
@@ -21,7 +22,7 @@ defmodule Abacus do
   end
   ```
 
-  This module provides functions to reference a metric type :
+  This module provides functions for referencing a metric type:
 
   -  `Length.cm/0`
   -  `Length.mm/0`
@@ -29,7 +30,7 @@ defmodule Abacus do
   -  `Length.m/0`
   -  `Length.km/0`
 
-  and functions to create a typed value :
+  and to create a value enclosed in a metric system:
 
   -  `Length.cm/1`
   -  `Length.mm/1`
@@ -44,12 +45,12 @@ defmodule Abacus do
   a_distance_in_km = Abacus.from(a_distance, to: Length.km)
   ```
 
-  A type is defined by a module and a subtype. For example `Length` and `:cm`.
+  A `metric_type` is defined by a module and a subtype. For example `Length` and `:cm`.
 
   """
 
   @typedoc """
-  This type represents a type (defined with using Abacus.SystemMetric)
+  This type represents a unit of measure (defined with using Abacus.SystemMetric)
   """
   @type metric_type :: {
     module, 
@@ -58,17 +59,12 @@ defmodule Abacus do
   }
 
   @typedoc """
-  This type represents a value wrapped in a metric_type
+  This type represents a value wrapped in a metric system
   """
   @type typed_value :: {
     metric_type, 
     number
   }
-
-  @typedoc """
-  This type represents the option `to:`
-  """
-  @type to_option :: [to: metric_type]
 
 
   defmodule SystemMetric do 
@@ -86,7 +82,7 @@ defmodule Abacus do
     This unit is the reference of each other units.
     
 
-    for example : 
+    For example : 
     ```
     defmodule Example do 
       use Abacus.SystemMetric
@@ -118,7 +114,7 @@ defmodule Abacus do
     referenced by `:cm` : 100000.
 
 
-    for example : 
+    For example: 
     ```
     defmodule Example do 
       use Abacus.SystemMetric
@@ -150,9 +146,9 @@ defmodule Abacus do
   end
 
   @doc """
-  Convert a `typed_value()` into a number, this function is used 
-  to extract data from a typed value.
+  Retrieves the wrapped numeric value in a `typed_value()`.
 
+  For example: 
       iex> x = AbacusTest.Length.cm(12)
       ...> x = Abacus.unwrap(x)
       12
@@ -162,15 +158,14 @@ defmodule Abacus do
   def unwrap({_, elt}), do: elt
 
   @doc """
-  Convert a `typed_value()` into another `typed_value()'s` subtype.
+ Converts a `typed_value()` to another subtype of its metric system.
 
-  For example : 
+  For example: 
       iex> x = AbacusTest.Length.cm(120)
-      ...> y = Abacus.from(x, to: AbacusTest.Length.m)
-      ...> Abacus.unwrap(y)
-      1.2
+      ...> Abacus.from(x, to: AbacusTest.Length.m)
+      {AbacusTest.Length.m, 1.2}
   """
-  @spec from(typed_value(), to_option()) :: typed_value()
+  @spec from(typed_value(), [to: metric_type()]) :: typed_value()
   def from({{module, _, coeff}, elt}, to: {module, _, coeff_basis} = basis) do 
     divider = 1 / coeff_basis
     basis_elt = (elt * coeff) * divider
@@ -182,19 +177,30 @@ defmodule Abacus do
   end
 
   @doc """
-  Apply a function to the numeric value inside a `typed_value()`.
+  Applies a function to the numeric value of a typed value and re-packs
+  the result of the function in the same subtype.
 
-  For example :
+  For example:
       iex> AbacusTest.Length.km(120)
       ...> |> Abacus.map(fn(x) -> x * 2 end)
-      ...> |> Abacus.unwrap
-      240
+      {AbacusTest.Length.km, 240}
   """
   @spec map(typed_value(), (number() -> number())) :: typed_value()
   def map({type, elt}, f) do 
     {type, f.(elt)}
   end
 
+  @doc """
+  Applies a function to the two numeric values of two `typed_values()` in 
+  the same metric system and the same subtype, and re-packages the result 
+  of the function in a `typed_value()` of the initial subtype.
+
+  For example: 
+      iex> a = AbacusTest.Length.dm(100)
+      ...> b = AbacusTest.Length.dm(2)
+      ...> Abacus.map2(a, b, &(&1 * &2))
+      {AbacusTest.Length.dm, 200}
+  """
   @spec map2(
     typed_value(), 
     typed_value(), 
@@ -215,11 +221,16 @@ defmodule Abacus do
       end
   end
 
+  @doc """
+  `List.foldl` for a list of `typed_value()` from the same metric system.
+
+  For example:
+  """
   @spec fold(
     [typed_value()], 
     any(), 
     (typed_value(), any() -> any()),
-    to_option()
+    [to: metric_type()]
     ) :: any()
   def fold(list, default, f, to: basis) do 
     List.foldl(list, default, fn(x, acc) ->
@@ -228,7 +239,7 @@ defmodule Abacus do
     end)
   end
 
-  @spec sum([typed_value()], to_option()) :: typed_value()
+  @spec sum([typed_value()], [to: metric_type]) :: typed_value()
   def sum(list, to: {module, basis_name, _coeff} = basis) do 
     fold(
       list, apply(module, basis_name, [0]),
