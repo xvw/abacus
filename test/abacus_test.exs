@@ -100,6 +100,14 @@ defmodule AbacusTest do
     assert (Abacus.compare(x, with: y)) == :gt
     assert (Abacus.compare(y, with: x)) == :lt
   end
+
+  test "failure of comparison" do 
+    x = Length.m(23)
+    y = Money.euro(100)
+    assert_raise RuntimeError, "[#{Length}] is not compatible with [#{Money}]", fn -> 
+      _ = Abacus.compare(y, with: x)
+    end
+  end
   
 
 end
