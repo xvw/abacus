@@ -197,33 +197,27 @@ defmodule Abacus do
 
   @doc """
   Applies a function to the two numeric values of two `typed_values()` in 
-  the same metric system and the same subtype, and re-packages the result 
-  of the function in a `typed_value()` of the initial subtype.
+  the same metric system, and re-packages the result 
+  of the function in a `typed_value()` of the subtype of the left `typed_values()`.
 
   For example: 
       iex> a = AbacusTest.Length.dm(100)
       ...> b = AbacusTest.Length.dm(2)
       ...> Abacus.map2(a, b, &(&1 * &2))
-      {AbacusTest.Length.dm, 200}
+      {AbacusTest.Length.dm, 200.0}
   """
   @spec map2(
     typed_value(), 
     typed_value(), 
     (number(), number() -> number())
     ) :: typed_value
-  def map2({t, elt}, {t, elt2}, f) do 
-    {t, f.(elt, elt2)}
+  def map2({{module, _, _} = t, elt}, {{module, _, _}, _} = elt2, f) do 
+    converted = from(elt2, to: t)
+    {t, f.(elt, unwrap(converted))}
   end
 
-  def map2({{module, t, _}, _}, {{other_module, nt, _}, _}, _) do 
-    cond do 
-      module != other_module ->
-        raise RuntimeError, message: "[#{module}] is not compatible with [#{other_module}]"
-      t != nt -> 
-        raise RuntimeError, message: "[#{t}] is not compatible with [#{nt}]"
-      true -> 
-        raise RuntimeError, message: "Invalid Input"
-      end
+  def map2({{module, _, _}, _}, {{other_module, _, _}, _}, _) do 
+    raise RuntimeError, message: "[#{module}] is not compatible with [#{other_module}]"
   end
 
   @doc """
@@ -278,7 +272,7 @@ defmodule Abacus do
   def sum(list, to: {module, basis_name, _coeff} = basis) do 
     fold(
       list, apply(module, basis_name, [0]),
-      &Abacus.+/2,
+      &add/2,
       to: basis
     )
   end
@@ -309,12 +303,25 @@ defmodule Abacus do
     end
   end
 
-  #@spec (typed_value() + typed_value()) :: typed_value()
-  #def ({t, _} = left) + right do 
-  #  map2(
-  #    left, from(right, to: t),
-  #    &(:erlang.+)/2
-  #  )
-  #end
+  @spec add(typed_value(), typed_value()) :: typed_value()
+  def add(a, b) do 
+    map2(a, b, &(&1 + &2))
+  end
+
+  @spec sub(typed_value(), typed_value()) :: typed_value()
+  def sub(a, b) do 
+    map2(a, b, &(&1 - &2))
+  end
+
+  @spec mult(typed_value(), number) :: typed_value()
+  def mult(a, b) do 
+    map(a, fn(x) -> x * b end)
+  end
+
+  @spec div(typed_value(), number) :: typed_value()
+  def div(a, b) do 
+    mult(a, 1/b)
+  end
+  
 
 end

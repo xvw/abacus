@@ -53,9 +53,9 @@ defmodule AbacusTest do
   end 
 
   test "failure for map2" do 
-    a = Length.dm(12)
-    b = Length.cm(34)
-    assert_raise RuntimeError, "[dm] is not compatible with [cm]", fn -> 
+    a = Money.euro(12)
+    b = Length.dm(34)
+    assert_raise RuntimeError, "[#{Money}] is not compatible with [#{Length}]", fn -> 
       _ = Abacus.map2(a, b, fn(x, y) -> x + y end)
     end
   end
