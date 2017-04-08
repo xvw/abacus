@@ -303,21 +303,33 @@ defmodule Abacus do
     end
   end
 
+  @doc """
+  To be done
+  """
   @spec add(typed_value(), typed_value()) :: typed_value()
   def add(a, b) do 
     map2(a, b, &(&1 + &2))
   end
 
+  @doc """
+  To be done
+  """
   @spec sub(typed_value(), typed_value()) :: typed_value()
   def sub(a, b) do 
     map2(a, b, &(&1 - &2))
   end
 
+  @doc """
+  To be done
+  """
   @spec mult(typed_value(), number) :: typed_value()
   def mult(a, b) do 
     map(a, fn(x) -> x * b end)
   end
 
+  @doc """
+  To be done
+  """
   @spec div(typed_value(), number) :: typed_value()
   def div(a, b) do 
     mult(a, 1/b)
