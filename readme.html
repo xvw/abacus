@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.15.0">
+    <title>Abacus – Abacus v1.0.0</title>
+    <link rel="stylesheet" href="dist/app-f7824c48e6.css" />
+    
+    <script src="dist/sidebar_items-86391e50ed.js"></script>
+  </head>
+  <body data-type="extras">
+    <script>if(localStorage.getItem('night-mode')) document.body.className += ' night-mode';</script>
+
+<div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+
+  
+  <a href="README.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        Abacus
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v1.0.0
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+
+    
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+
+<h1>Abacus</h1>
+<p>Abacus is a module for transforming other modules into metric systems.</p>
+<p>For example :</p>
+<pre><code class="elixir">defmodule Length do 
+  use Abacus.SystemMetric
+  unit :cm 
+  unit :mm, (1/10)
+  unit :dm, 10
+  unit :m,  100
+  unit :km, 100000
+end
+
+defmodule Money do 
+  use Abacus.SystemMetric
+  unit :euro
+  unit :dollar, 1.06665
+end</code></pre>
+<p>These modules make it possible to use functions to create values enclosed 
+in a metric system and functions to manipulate these values.</p>
+<p>For example : </p>
+<ul>
+<li><a href="https://github.com/xvw/abacus/blob/master/test/abacus_test.exs">test/abacus_test.exs</a>
+</li>
+<li><a href="https://github.com/xvw/abacus/blob/master/lib/abacus.ex">lib/abacus.ex</a> (doctest comments)
+</li>
+</ul>
+<p>You can see the documentation here : </p>
+<p><a href="https://xvw.github.io/abacus">xvw.github.io/abacus</a></p>
+<h2 id="installation" class="section-heading">
+  <a href="#installation" class="hover-link"><i class="icon-link"></i></a>
+  Installation
+</h2>
+
+<p>If <a href="https://hex.pm/docs/publish">available in Hex</a>, the package can be installed
+by adding <code class="inline">abacus</code> to your list of dependencies in <code class="inline">mix.exs</code>:</p>
+<pre><code class="elixir">def deps do
+  [{:abacus, &quot;~&gt; 1.0.0&quot;}]
+end</code></pre>
+<p>Documentation can be generated with <a href="https://github.com/elixir-lang/ex_doc">ExDoc</a>
+and published on <a href="https://hexdocs.pm">HexDocs</a>. Once published, the docs can
+be found at <a href="https://hexdocs.pm/abacus">https://hexdocs.pm/abacus</a>.</p>
+
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.15.0),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+        <button class="night-mode-toggle" />
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  <script src="dist/app-372682077e.js"></script>
+  </body>
+</html>
+
