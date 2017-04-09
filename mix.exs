@@ -55,8 +55,8 @@ defmodule Abacus.Mixfile do
 
   defp package do
     [
-     name: :abacus,
-     files: ["lib", "mix.exs", "README*", "readme*", "LICENSE*", "license*"],
+     name: :abacus_sm,
+     files: ["lib", "mix.exs", "README*", "LICENSE*"],
      maintainers: ["Xavier Van de Woestyne"],
      licenses: ["MIT"],
      links: %{"GitHub" => "https://github.com/xvw/abacus",
