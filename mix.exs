@@ -15,7 +15,10 @@ defmodule Abacus.Mixfile do
         main: "README",
         extras: ["README.md"]
       ],
-     deps: deps()]
+      package: package(),
+      description: description(),
+      deps: deps()
+    ]
   end
 
   # Configuration for the OTP application
@@ -41,4 +44,24 @@ defmodule Abacus.Mixfile do
       {:ex_doc, "~> 0.14", only: :dev, runtime: false}
     ]
   end
+
+  defp description do 
+    """
+    Abacus is a module for transforming other modules into metric systems.
+    These modules (metric systems) make it possible to use functions to create values enclosed 
+    in a metric system and functions to manipulate these values.
+    """
+  end
+
+  defp package do
+    [
+     name: :abacus,
+     files: ["lib", "mix.exs", "README*", "readme*", "LICENSE*", "license*"],
+     maintainers: ["Xavier Van de Woestyne"],
+     licenses: ["MIT"],
+     links: %{"GitHub" => "https://github.com/xvw/abacus",
+              "Docs" => "http://xvw.github.io/abacus/"}]
+  end
+
+
 end
