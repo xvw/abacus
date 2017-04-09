@@ -12,7 +12,7 @@ defmodule Abacus.Mixfile do
       source_url: "https://github.com/xvw/abacus",
       homepage_url: "https://xvw.github.io/xvw/abacus",
       docs: [
-        main: "README",
+        main: "readme",
         extras: ["README.md"]
       ],
      deps: deps()]
