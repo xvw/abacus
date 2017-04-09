@@ -304,7 +304,13 @@ defmodule Abacus do
   end
 
   @doc """
-  To be done
+  Makes the addition between two `typed_value()` of the same metric system. 
+  The return value will have the subtype of the left `typed_value()`.
+
+      iex> a = AbacusTest.Length.cm(12)
+      ...> b = AbacusTest.Length.m(2)
+      ...> Abacus.add(a, b)
+      {AbacusTest.Length.cm, 212.0}
   """
   @spec add(typed_value(), typed_value()) :: typed_value()
   def add(a, b) do 
@@ -312,7 +318,13 @@ defmodule Abacus do
   end
 
   @doc """
-  To be done
+  Makes the subtraction between two `typed_value()` of the same metric system. 
+  The return value will have the subtype of the left `typed_value()`.
+
+      iex> a = AbacusTest.Length.cm(12)
+      ...> b = AbacusTest.Length.m(2)
+      ...> Abacus.sub(b, a)
+      {AbacusTest.Length.m, 1.88}
   """
   @spec sub(typed_value(), typed_value()) :: typed_value()
   def sub(a, b) do 
@@ -320,7 +332,12 @@ defmodule Abacus do
   end
 
   @doc """
-  To be done
+  Multiplies a `typed_value()` by a `number()`. The subtype of the return value 
+  will be the subtype of the left `typed_value()`.
+
+      iex> a = AbacusTest.Length.cm(12)
+      ...> Abacus.mult(a, 10)
+      {AbacusTest.Length.cm, 120.0}
   """
   @spec mult(typed_value(), number) :: typed_value()
   def mult(a, b) do 
@@ -328,7 +345,12 @@ defmodule Abacus do
   end
 
   @doc """
-  To be done
+  Divides a `typed_value()` by a `number()`. The subtype of the return value 
+  will be the subtype of the left `typed_value()`.
+
+      iex> a = AbacusTest.Length.cm(12)
+      ...> Abacus.div(a, 2)
+      {AbacusTest.Length.cm, 6.0}
   """
   @spec div(typed_value(), number) :: typed_value()
   def div(a, b) do 
