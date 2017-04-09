@@ -106,7 +106,7 @@ defmodule Abacus do
         def unquote(name)(value) do 
           {
             apply(__MODULE__, unquote(name), []), 
-            value
+            value * 1.0
           }
         end
       end
@@ -143,7 +143,7 @@ defmodule Abacus do
         def unquote(name)(value) do 
           {
             apply(__MODULE__, unquote(name), []), 
-            value
+            value * 1.0
           }
         end
       end
@@ -156,7 +156,7 @@ defmodule Abacus do
   For example: 
       iex> x = AbacusTest.Length.cm(12)
       ...> Abacus.unwrap(x)
-      12
+      12.0
 
   """
   @spec unwrap(typed_value()) :: number()
@@ -188,7 +188,7 @@ defmodule Abacus do
   For example:
       iex> AbacusTest.Length.km(120)
       ...> |> Abacus.map(fn(x) -> x * 2 end)
-      {AbacusTest.Length.km, 240}
+      {AbacusTest.Length.km, 240.0}
   """
   @spec map(typed_value(), (number() -> number())) :: typed_value()
   def map({type, elt}, f) do 

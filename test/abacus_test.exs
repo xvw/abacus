@@ -20,7 +20,7 @@ defmodule AbacusTest do
 
   test "for unwraping" do 
     input = Length.cm(12)
-    assert (Abacus.unwrap input) == 12
+    assert (Abacus.unwrap input) == 12.0
   end
 
   test "for difftyped data" do 
@@ -42,7 +42,7 @@ defmodule AbacusTest do
     input = Length.cm(12)
     |> Abacus.map(fn(x) -> x + 10 end)
     |> Abacus.unwrap
-    assert input == 22
+    assert input == 22.0
   end
 
   test "for map2" do 
@@ -71,7 +71,7 @@ defmodule AbacusTest do
         to: Length.m
         )
       |> Abacus.unwrap
-      assert result == 1014
+      assert result == 1014.0
 
   end
 
@@ -81,7 +81,7 @@ defmodule AbacusTest do
       |> Abacus.sum(to: Length.cm)
       |> Abacus.unwrap()
 
-    assert result == (100000 + 1200 + 14)
+    assert result == (100000 + 1200 + 14)*1.0
     
   end
 
