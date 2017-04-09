@@ -63,7 +63,7 @@ defmodule Abacus do
   """
   @type typed_value :: {
     metric_type, 
-    number
+    float
   }
 
   @typedoc """
