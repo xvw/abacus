@@ -1,6 +1,38 @@
 # Abacus
 
-**TODO: Add description**
+Abacus is a module for transforming other modules into metric systems.
+
+For example :
+
+```elixir
+defmodule Length do 
+  use Abacus.SystemMetric
+  unit :cm 
+  unit :mm, (1/10)
+  unit :dm, 10
+  unit :m,  100
+  unit :km, 100000
+end
+
+defmodule Money do 
+  use Abacus.SystemMetric
+  unit :euro
+  unit :dollar, 1.06665
+end
+```
+
+These modules make it possible to use functions to create values enclosed 
+in a metric system and functions to manipulate these values.
+
+For example : 
+
+- [test/abacus_test.exs](https://github.com/xvw/abacus/blob/master/test/abacus_test.exs)
+- [lib/abacus.ex](https://github.com/xvw/abacus/blob/master/lib/abacus.ex) (doctest comments)
+
+You can see the documentation here : 
+
+[xvw.github.io/abacus](https://xvw.github.io/abacus)
+
 
 ## Installation
 
@@ -9,7 +41,7 @@ by adding `abacus` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:abacus, "~> 0.1.0"}]
+  [{:abacus, "~> 1.0.0"}]
 end
 ```
 
