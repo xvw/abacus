@@ -31,7 +31,7 @@ For example :
 
 You can see the documentation here : 
 
-[xvw.github.io/abacus/index.html](https://xvw.github.io/abacus)
+[xvw.github.io/abacus/index.html](https://xvw.github.io/abacus/index.html)
 
 
 ## Installation
