@@ -1,3 +1,9 @@
+Hi, I'm currently working on a new lib. A better 
+experience, with more functionalities ! 
+
+[Checkout Mizur, the new approach of the Unit Handler problem](https://github.com/xvw/mizur)
+
+
 # Abacus
 
 Abacus is a module for transforming other modules into metric systems.
