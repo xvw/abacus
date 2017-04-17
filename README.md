@@ -1,7 +1,7 @@
 Hi, I'm currently working on a new lib. A better 
 experience, with more functionalities ! 
 
-[Checkout Mizur, the new approach of the Unit Handler problem](https://github.com/xvw/mizur)
+[Checkout Mizur, the new approach of the Unit Handler problem](https://github.com/xvw/mizur) (but it is still in progress)
 
 
 # Abacus
